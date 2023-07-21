@@ -1,0 +1,13 @@
+[project]
+authors = [
+    { name = "Federico Oberndorfer", email = "federico.ober@hotmail.com" },
+]
+name = "api"
+dependencies = ["fastapi >= 0.100.0", "passlib[bcrypt]", "uvicorn[standard]"]
+dynamic = ["version"]
+
+[build-system]
+requires = ["setuptools>=68", "setuptools-scm[toml]>=7.1"]
+
+[tool.setuptools_scm]
+root = ".."
