@@ -9,10 +9,8 @@ dependencies = [
     "uvicorn[standard]",
     "pydantic>=2",
 ]
-dynamic = ["version"]
+version = "0.1.0"
 
 [build-system]
-requires = ["setuptools>=68", "setuptools-scm[toml]>=7.1"]
+requires = ["setuptools>=68"]
 
-[tool.setuptools_scm]
-root = ".."

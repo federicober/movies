@@ -1,4 +1,4 @@
-VIRTUAL_ENV: .venv
+VIRTUAL_ENV = .venv
 
 ${VIRTUAL_ENV}/bin/python:
 	python3 -m venv ${VIRTUAL_ENV}
