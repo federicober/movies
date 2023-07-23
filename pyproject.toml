@@ -8,6 +8,8 @@ dependencies = [
     "passlib[bcrypt]",
     "uvicorn[standard]",
     "pydantic>=2",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]"
 ]
 version = "0.1.0"
 
