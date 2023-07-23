@@ -1,4 +1,0 @@
-fastapi>=0.100.0
-passlib[bcrypt]
-uvicorn[standard]
-pydantic>=2
