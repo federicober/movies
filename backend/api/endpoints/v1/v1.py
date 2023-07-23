@@ -1,6 +1,6 @@
 import fastapi
 
-from api import schemas
+from .. import schemas
 
 router = fastapi.APIRouter()
 
@@ -12,14 +12,33 @@ def login():
     pass
 
 
+EXAMPLE_SESSION = schemas.Session(
+    id="abcd-efgh",
+    members=[
+        schemas.User(id="1", name="Federico", email="john@example.com"),
+        schemas.User(id="2", name="Nathemis", email="john@example.com"),
+    ],
+)
+
+
+@router.get("/session")
+def list_sessions() -> list[schemas.Session]:
+    return [EXAMPLE_SESSION]
+
+
 @router.post("/session")
 def create_session(session_id: str = fastapi.Body(embed=True)) -> schemas.Session:
-    return schemas.Session(id="abcd-efgh")
+    return EXAMPLE_SESSION
+
+
+@router.get("/session/{session_id}")
+def get_session(session_id: str) -> schemas.Session:
+    return EXAMPLE_SESSION
 
 
 @router.get("/session/{session_id}/join")
-def join_session() -> str:
-    return "ok"
+def join_session() -> schemas.Session:
+    return EXAMPLE_SESSION
 
 
 @router.get("/session/{session_id}/next_movie")

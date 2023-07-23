@@ -7,12 +7,12 @@ dependencies = [
     "fastapi >= 0.100.0",
     "passlib[bcrypt]",
     "uvicorn[standard]",
-    "pydantic>=2",
+    "pydantic[email]>=2",
     "python-jose[cryptography]",
-    "passlib[bcrypt]"
+    "passlib[bcrypt]",
+    "pydantic-settings",
 ]
 version = "0.1.0"
 
 [build-system]
 requires = ["setuptools>=68"]
-
