@@ -1,0 +1,3 @@
+{
+  "python.linting.mypyPath": "./backend/.venv/bin/mypy"
+}

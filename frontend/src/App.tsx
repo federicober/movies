@@ -4,12 +4,16 @@ import ThemeProvider from "@mui/material/styles/ThemeProvider";
 
 import Header from "./components/Header";
 import Root from "./pages/Root";
+import { OpenAPI } from "./client";
+import SessionDetails from "./pages/SessionDetails";
+
+const theme = createTheme({
+  spacing: 2,
+});
+
+OpenAPI.BASE = "http://localhost:8000";
 
 function App() {
-  const theme = createTheme({
-    spacing: 2,
-  });
-
   const onLogout = () => {
     console.log("Login out");
   };
@@ -19,11 +23,8 @@ function App() {
       <Header onLogout={onLogout} />
       <BrowserRouter>
         <Routes>
-          {/* <Route
-            path="/session/:SessionId"
-            element={<Session />}
-          /> */}
-          <Route path="/*" element={<Root />}></Route>
+          <Route path="/session/:SessionId" element={<SessionDetails />} />
+          <Route path="/" element={<Root />}></Route>
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
