@@ -3,7 +3,12 @@ authors = [
     { name = "Federico Oberndorfer", email = "federico.ober@hotmail.com" },
 ]
 name = "api"
-dependencies = ["fastapi >= 0.100.0", "passlib[bcrypt]", "uvicorn[standard]"]
+dependencies = [
+    "fastapi >= 0.100.0",
+    "passlib[bcrypt]",
+    "uvicorn[standard]",
+    "pydantic>=2",
+]
 dynamic = ["version"]
 
 [build-system]
