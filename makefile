@@ -2,6 +2,7 @@ VIRTUAL_ENV = .venv
 
 ${VIRTUAL_ENV}/bin/python:
 	python3 -m venv ${VIRTUAL_ENV}
+	pip install -U -q pip wheel
 	touch ${VIRTUAL_ENV}/bin/python
 
 .PHONY: venv
@@ -13,3 +14,6 @@ api.egg-info: pyproject.toml | venv
 
 .PHONY: develop
 develop: api.egg-info
+
+run: | develop
+	${VIRTUAL_ENV}/bin/uvicorn api.__main__:app --factory --reload
