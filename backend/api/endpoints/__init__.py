@@ -1,4 +1,4 @@
-from . import v1
+from .v1 import v1
 import fastapi
 
 router = fastapi.APIRouter()
