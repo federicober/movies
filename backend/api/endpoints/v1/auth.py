@@ -1,6 +1,6 @@
 import fastapi
 
-from .. import schemas
+from ... import schemas
 
 router = fastapi.APIRouter()
 

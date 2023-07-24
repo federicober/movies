@@ -1,5 +1,7 @@
-from .v1 import v1
+from . import v1
 import fastapi
+import pydantic
+
 
 router = fastapi.APIRouter()
 
