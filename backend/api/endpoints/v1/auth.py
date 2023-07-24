@@ -10,7 +10,6 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 
 from ... import schemas
-import fake_user_db  
 
 router = fastapi.APIRouter()
 
@@ -64,9 +63,6 @@ class UserInDB(User):
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-#app = FastAPI()
-
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
