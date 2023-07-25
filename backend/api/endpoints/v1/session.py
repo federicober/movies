@@ -37,9 +37,11 @@ def join_session() -> schemas.Session:
 
 
 @router.get("/{session_id}/next_movie")
-def get_next_movie() -> schemas.Movie:
+def get_next_movie(session_id: str) -> schemas.Movie:
     return schemas.Movie(
-        id="foo", title="2001 Space Odyssey", image_url="https://example.com/my-img.png"
+        id="foo",
+        title="2001 Space Odyssey",
+        image_url="https://m.media-amazon.com/images/M/MV5BMmNlYzRiNDctZWNhMi00MzI4LThkZTctMTUzMmZkMmFmNThmXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
     )
 
 

@@ -3,9 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { api__schemas__User } from "./api__schemas__User";
-
-export type Session = {
+export type api__schemas__User = {
   id: string;
-  members: Array<api__schemas__User>;
+  name: string;
+  email: string;
 };

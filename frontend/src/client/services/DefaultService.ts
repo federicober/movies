@@ -2,10 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { api__endpoints__v1__auth__User } from "../models/api__endpoints__v1__auth__User";
 import type { Body_create_session_v1_session_post } from "../models/Body_create_session_v1_session_post";
+import type { Body_login_for_access_token_v1_auth_token_post } from "../models/Body_login_for_access_token_v1_auth_token_post";
 import type { Movie } from "../models/Movie";
 import type { Session } from "../models/Session";
 import type { SessionMatches } from "../models/SessionMatches";
+import type { Token } from "../models/Token";
 import type { Vote } from "../models/Vote";
 
 import type { CancelablePromise } from "../core/CancelablePromise";
@@ -18,10 +21,54 @@ export class DefaultService {
    * @returns any Successful Response
    * @throws ApiError
    */
-  public static loginV1LoginPost(): CancelablePromise<any> {
+  public static loginV1AuthLoginPost(): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "/v1/login",
+      url: "/v1/auth/login",
+    });
+  }
+
+  /**
+   * Login For Access Token
+   * @param formData
+   * @returns Token Successful Response
+   * @throws ApiError
+   */
+  public static loginForAccessTokenV1AuthTokenPost(
+    formData: Body_login_for_access_token_v1_auth_token_post,
+  ): CancelablePromise<Token> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/v1/auth/token",
+      formData: formData,
+      mediaType: "application/x-www-form-urlencoded",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Read Users Me
+   * @returns api__endpoints__v1__auth__User Successful Response
+   * @throws ApiError
+   */
+  public static readUsersMeV1AuthUsersMeGet(): CancelablePromise<api__endpoints__v1__auth__User> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/v1/auth/users/me/",
+    });
+  }
+
+  /**
+   * Read Own Items
+   * @returns any Successful Response
+   * @throws ApiError
+   */
+  public static readOwnItemsV1AuthUsersMeItemsGet(): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/v1/auth/users/me/items/",
     });
   }
 
@@ -92,13 +139,22 @@ export class DefaultService {
 
   /**
    * Get Next Movie
+   * @param sessionId
    * @returns Movie Successful Response
    * @throws ApiError
    */
-  public static getNextMovieV1SessionSessionIdNextMovieGet(): CancelablePromise<Movie> {
+  public static getNextMovieV1SessionSessionIdNextMovieGet(
+    sessionId: string,
+  ): CancelablePromise<Movie> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/v1/session/{session_id}/next_movie",
+      path: {
+        session_id: sessionId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
     });
   }
 
