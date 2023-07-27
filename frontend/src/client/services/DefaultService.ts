@@ -160,16 +160,21 @@ export class DefaultService {
 
   /**
    * Vote For Movie
+   * @param sessionId
    * @param requestBody
    * @returns string Successful Response
    * @throws ApiError
    */
   public static voteForMovieV1SessionSessionIdMovieMovieIdPost(
+    sessionId: string,
     requestBody: Vote,
   ): CancelablePromise<string> {
     return __request(OpenAPI, {
       method: "POST",
       url: "/v1/session/{session_id}/movie/{movie_id}",
+      path: {
+        session_id: sessionId,
+      },
       body: requestBody,
       mediaType: "application/json",
       errors: {
@@ -180,13 +185,22 @@ export class DefaultService {
 
   /**
    * Get Session Matches
+   * @param sessionId
    * @returns SessionMatches Successful Response
    * @throws ApiError
    */
-  public static getSessionMatchesV1SessionSessionIdMatchesGet(): CancelablePromise<SessionMatches> {
+  public static getSessionMatchesV1SessionSessionIdMatchesGet(
+    sessionId: string,
+  ): CancelablePromise<SessionMatches> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/v1/session/{session_id}/matches",
+      path: {
+        session_id: sessionId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
     });
   }
 }

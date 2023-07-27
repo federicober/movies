@@ -3,7 +3,7 @@ import createTheme from "@mui/material/styles/createTheme";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 
 import Header from "./components/Header";
-import Root from "./pages/Root";
+import Home from "./pages/Home";
 import { OpenAPI } from "./client";
 import SessionDetails from "./pages/SessionDetails";
 
@@ -24,7 +24,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/session/:SessionId" element={<SessionDetails />} />
-          <Route path="/" element={<Root />}></Route>
+          <Route path="/" element={<Home />}></Route>
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

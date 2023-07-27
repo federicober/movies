@@ -7,14 +7,22 @@ import {
   Typography,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { DefaultService, Movie, Session } from "../client";
-import { useEffect, useState } from "react";
+import {
+  DefaultService,
+  Movie,
+  Session,
+  SessionMatches,
+  Vote,
+} from "../client";
+import { useCallback, useEffect, useState } from "react";
 import { Check, Close } from "@mui/icons-material";
+import SessionHeader from "./SessionHeader";
 
 interface MovieCardProps {
   movie: Movie;
+  onVote: (vote: Vote.vote) => void;
 }
-export function MovieCard({ movie }: MovieCardProps) {
+export function MovieCard({ movie, onVote }: MovieCardProps) {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -30,11 +38,11 @@ export function MovieCard({ movie }: MovieCardProps) {
           Movie description
         </Typography>
       </CardContent>
-      <CardActions disableSpacing>
-        <IconButton>
+      <CardActions>
+        <IconButton onClick={() => onVote(Vote.vote.YES)}>
           <Check />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={() => onVote(Vote.vote.NO)}>
           <Close />
         </IconButton>
       </CardActions>
@@ -50,6 +58,22 @@ export default function SessionDetails() {
 
   const [session, setSession] = useState<Session | null>(null);
   const [nextMovie, setNextMovie] = useState<Movie | null>(null);
+  const [matches, setMatches] = useState<SessionMatches | undefined>(undefined);
+
+  const refreshPage = useCallback(() => {
+    if (session === null) return;
+    const fetchData = async (): Promise<void> => {
+      const [nextMovie, matches] = await Promise.all([
+        DefaultService.getNextMovieV1SessionSessionIdNextMovieGet(session.id),
+        DefaultService.getSessionMatchesV1SessionSessionIdMatchesGet(
+          session.id,
+        ),
+      ]);
+      setNextMovie(nextMovie);
+      setMatches(matches);
+    };
+    fetchData();
+  }, [session]);
 
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
@@ -61,20 +85,25 @@ export default function SessionDetails() {
   }, [sessionId]);
 
   useEffect(() => {
-    if (session === null) return;
-
-    const fetchData = async (): Promise<void> => {
-      setNextMovie(
-        await DefaultService.getNextMovieV1SessionSessionIdNextMovieGet(
-          session.id,
-        ),
-      );
-    };
-    fetchData();
-  }, [session]);
+    refreshPage();
+  }, [refreshPage, session]);
 
   if (session === null || nextMovie === null) {
     return <Typography>Loading...</Typography>;
   }
-  return <MovieCard movie={nextMovie} />;
+
+  const onVote = async (vote: Vote.vote) => {
+    DefaultService.voteForMovieV1SessionSessionIdMovieMovieIdPost(session.id, {
+      movie_id: nextMovie.id,
+      vote: vote,
+    });
+    refreshPage();
+  };
+
+  return (
+    <>
+      <SessionHeader session={session} matches={matches} />
+      <MovieCard movie={nextMovie} onVote={onVote} />
+    </>
+  );
 }
