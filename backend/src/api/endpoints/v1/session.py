@@ -12,8 +12,8 @@ __all__ = ["router"]
 EXAMPLE_SESSION = schemas.Session(
     id="abcd-efgh",
     members=[
-        schemas.User(id="1", name="Federico", email="john@example.com"),
-        schemas.User(id="2", name="Nathemis", email="john@example.com"),
+        schemas.user.User(id="1", username="federicober", email="john@example.com"),
+        schemas.user.User(id="2", username="nathemis", email="john@example.com"),
     ],
 )
 
@@ -53,7 +53,7 @@ def join_session() -> schemas.Session:
 
 @router.get("/{session_id}/next_movie")
 def get_next_movie(session_id: str) -> schemas.Movie:
-    return random.choice(EXAMPLE_MOVIES)
+    return random.choice(EXAMPLE_MOVIES)  # noqa: S311
 
 
 @router.post("/{session_id}/movie/{movie_id}")

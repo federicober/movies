@@ -1,6 +1,6 @@
-from . import auth, session
-
 import fastapi
+
+from . import auth, session
 
 router = fastapi.APIRouter()
 

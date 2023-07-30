@@ -5,7 +5,7 @@ from . import endpoints, settings
 
 
 def app() -> fastapi.FastAPI:
-    settings_ = settings.Settings()  # pyright: ignore
+    settings_ = settings.get_settings()
     app_ = fastapi.FastAPI()
 
     app_.include_router(endpoints.router)
