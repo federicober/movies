@@ -2,9 +2,9 @@ import random
 
 import fastapi
 
-from ... import schemas
+from api import deps, schemas
 
-router = fastapi.APIRouter()
+router = fastapi.APIRouter(dependencies=[fastapi.Depends(deps.get_current_user)])
 
 __all__ = ["router"]
 
@@ -16,6 +16,7 @@ EXAMPLE_SESSION = schemas.Session(
         schemas.user.User(id="2", username="nathemis", email="john@example.com"),
     ],
 )
+
 
 EXAMPLE_MOVIES = [
     schemas.Movie(
