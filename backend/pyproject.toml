@@ -2,7 +2,9 @@
 authors = [
     { name = "Federico Oberndorfer", email = "federico.ober@hotmail.com" },
 ]
-name = "api"
+name = "movies"
+version = "0.1.0"
+
 dependencies = [
     "fastapi>=0.100.0",
     "uvicorn[standard]>=0.23.1",
@@ -11,9 +13,10 @@ dependencies = [
     "pydantic-settings>=2",
     "passlib[bcrypt]>=1.7.4",
     "python-jose[cryptography]>=3.3.0",
-    "sqlalchemy>=2",
+    "alembic",
+    "sqlmodel",
+    "aiocache",
 ]
-version = "0.1.0"
 
 [project.optional-dependencies]
 dev = [
@@ -23,11 +26,24 @@ dev = [
     "types-python-jose",
     "types-passlib",
     "ruff",
+    "pytest",
+    "pytest-cov",
 ]
 
 
 [build-system]
 requires = ["setuptools>=68"]
+
+[tool.pytest.ini_options]
+addopts = """
+--cov=movies
+"""
+testpaths = ["tests"]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore:'crypt' is deprecated.*:DeprecationWarning",
+]
 
 
 [tool.mypy]
@@ -35,9 +51,9 @@ files = ["src"]
 strict = true
 plugins = ["sqlalchemy.ext.mypy.plugin", "pydantic.mypy"]
 
-
-[tool.ruff]
+[tool.ruff.lint]
 select = ["I", "PGH", "S", "B"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "src/api/endpoints/**/*" = ["B008"]
+"tests/**/*" = ["S"]

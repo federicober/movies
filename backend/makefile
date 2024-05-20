@@ -1,14 +1,15 @@
 VIRTUAL_ENV = .venv
 
-${VIRTUAL_ENV}/bin/python:
-	python3 -m venv ${VIRTUAL_ENV}
+${VIRTUAL_ENV}/bin/python: .python-version
+	rm -rf ${VIRTUAL_ENV}
+	python -m venv ${VIRTUAL_ENV}
 	${VIRTUAL_ENV}/bin/pip install -U -q pip wheel
 	touch ${VIRTUAL_ENV}/bin/python
 
 .PHONY: venv
 venv: ${VIRTUAL_ENV}/bin/python
 
-${VIRTUAL_ENV}/.develop: pyproject.toml | venv
+${VIRTUAL_ENV}/.develop: pyproject.toml ${VIRTUAL_ENV}/bin/python
 	${VIRTUAL_ENV}/bin/pip install -e .[dev]
 	touch ${VIRTUAL_ENV}/.develop
 
@@ -21,9 +22,17 @@ develop: ${VIRTUAL_ENV}/.develop
 	@cat .env | grep SECRET_KEY || (echo SECRET_KEY=$$(openssl rand -hex 32) >> .env)
 	touch .env
 
+.PHONY: run
 run: .env | develop
-	${VIRTUAL_ENV}/bin/uvicorn api.app:app --factory --reload
+	${VIRTUAL_ENV}/bin/uvicorn movies.api.app:app_factory --factory --reload
 
 .PHONY: lint
-lint:
+lint: | develop
 	${VIRTUAL_ENV}/bin/ruff check --fix .
+
+.PHONY: test
+test: | develop
+	${VIRTUAL_ENV}/bin/pytest
+
+.PHONY: all
+all: lint test
