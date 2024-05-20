@@ -4,16 +4,15 @@ import pydantic
 class BaseUser(pydantic.BaseModel):
     model_config = {"from_attributes": True}
 
-    username: str
+    email: str
+    display_name: str
 
 
-class User(BaseUser):
+class GetUserResponse(BaseUser):
     model_config = {"from_attributes": True}
 
-    id: int
 
-
-class CreateUser(BaseUser):
+class CreateUserRequest(BaseUser):
     model_config = {"from_attributes": False}
 
     password: str

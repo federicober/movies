@@ -1,23 +1,24 @@
 import asyncio
 import logging
 
-from api import crud, database, migrate, schemas
+from movies import crud, database, migrate, models, schemas
 
 logger = logging.getLogger(__name__)
 
-USERS = [
-    schemas.user.CreateUser(
-        username="federicober",
-        password="foobar",  # noqa: S106
-    )
-]
-
 
 async def main() -> None:
+    database.start_mappers()
+    users = [
+        models.User(
+            username="federicober",
+            email="joh.doe@example.org",
+            password="foobar",  # noqa: S106
+        )
+    ]
     await migrate.migrate()
     async with (await database.get_session_factory())() as db:
-        for user in USERS:
-            logger.info("Creating user %s", user.username)
+        for user in users:
+            logger.info("Creating user %s", user)
             await crud.user.create_user(db, user)
         await db.commit()
     logger.info("All setup")

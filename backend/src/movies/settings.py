@@ -1,3 +1,5 @@
+import functools
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,11 +15,6 @@ class _Settings(BaseSettings):
     secret_key: str
 
 
-__settings_cache: _Settings | None = None
-
-
+@functools.lru_cache()
 def get_settings() -> _Settings:
-    global __settings_cache
-    if __settings_cache is None:
-        __settings_cache = _Settings()  # pyright: ignore[reportGeneralTypeIssues]
-    return __settings_cache
+    return _Settings()  # pyright: ignore[reportGeneralTypeIssues]

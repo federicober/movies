@@ -1,10 +1,15 @@
+import contextlib
+from typing import AsyncIterator
+
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import endpoints, settings
+from movies import settings
+
+from . import endpoints
 
 
-def app() -> fastapi.FastAPI:
+def app_factory() -> fastapi.FastAPI:
     settings_ = settings.get_settings()
     app_ = fastapi.FastAPI()
 

@@ -2,23 +2,17 @@ from typing import Literal
 
 import pydantic
 
-from . import _token as token
+from . import _movie as movie
 from . import _user as user
 
 
 class Session(pydantic.BaseModel):
-    id: str
-    members: list[user.User]
+    reference: str
+    members: list[user.BaseUser]
 
 
 class Sessions(pydantic.RootModel[Session]):
     pass
-
-
-class Movie(pydantic.BaseModel):
-    id: str
-    title: str
-    image_url: str
 
 
 class Vote(pydantic.BaseModel):
@@ -28,4 +22,4 @@ class Vote(pydantic.BaseModel):
 
 class SessionMatches(pydantic.BaseModel):
     count: int
-    movies: list[Movie]
+    movies: list[movie.Movie]

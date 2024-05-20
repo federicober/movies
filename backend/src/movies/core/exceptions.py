@@ -1,0 +1,17 @@
+from fastapi import status
+
+
+class MoviesException(Exception):
+    """Generic exception raised by the API"""
+
+
+class NotFoundException(MoviesException):
+    pass
+
+
+class UserNotFound(NotFoundException):
+    pass
+
+
+class IncorrectUserOrPassword(UserNotFound):
+    pass
