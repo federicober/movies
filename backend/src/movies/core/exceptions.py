@@ -15,3 +15,11 @@ class UserNotFound(NotFoundException):
 
 class IncorrectUserOrPassword(UserNotFound):
     pass
+
+
+class AlreadyExists(MoviesException):
+    pass
+
+
+class UserAlreadyExists(AlreadyExists):
+    pass

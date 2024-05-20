@@ -1,6 +1,8 @@
 import dataclasses
 
+import sqlalchemy.exc
 from passlib.context import CryptContext
+from sqlalchemy import insert
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -31,13 +33,16 @@ class UserRepo(interfaces.IUserRepo):
 
     async def create(self, display_name: str, email: str, password: str) -> None:
         hashed_password = _get_password_hash(password)
-        self.db_session.add(
-            User(
-                display_name=display_name,
-                email=email,
-                hashed_password=hashed_password,
+        try:
+            await self.db_session.execute(
+                insert(User).values(
+                    display_name=display_name,
+                    email=email,
+                    hashed_password=hashed_password,
+                )
             )
-        )
+        except sqlalchemy.exc.IntegrityError:
+            raise exceptions.UserAlreadyExists() from None
 
     async def authenticate(self, email: str, password: str) -> User:
         try:

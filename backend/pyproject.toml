@@ -12,7 +12,7 @@ dependencies = [
     "pydantic[email]>=2",
     "pydantic-settings>=2",
     "passlib[bcrypt]>=1.7.4",
-    "python-jose[cryptography]>=3.3.0",
+    "pyjwt[crypto]>=2.8.0",
     "alembic",
     "sqlmodel",
     "aiocache",
@@ -28,6 +28,7 @@ dev = [
     "ruff",
     "pytest",
     "pytest-cov",
+    "freezegun",
 ]
 
 
@@ -39,11 +40,7 @@ addopts = """
 --cov=movies
 """
 testpaths = ["tests"]
-filterwarnings = [
-    "error",
-    "ignore::UserWarning",
-    "ignore:'crypt' is deprecated.*:DeprecationWarning",
-]
+filterwarnings = ['ignore::DeprecationWarning']
 
 
 [tool.mypy]

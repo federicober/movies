@@ -29,6 +29,7 @@ run: .env | develop
 .PHONY: lint
 lint: | develop
 	${VIRTUAL_ENV}/bin/ruff check --fix .
+	${VIRTUAL_ENV}/bin/mypy
 
 .PHONY: test
 test: | develop

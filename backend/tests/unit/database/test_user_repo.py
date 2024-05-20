@@ -6,6 +6,8 @@ from movies.core import exceptions
 from movies.core.repositories.user_repo import UserRepo
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+pytestmark = pytest.mark.anyio
+
 
 @pytest.fixture()
 async def user_repo(
@@ -15,7 +17,6 @@ async def user_repo(
         yield UserRepo(session)
 
 
-@pytest.mark.anyio
 async def test_user_repo_create_get_returns_same_user(user_repo: UserRepo) -> None:
     email = "foo@example.org"
     display_name = "foo_user"
@@ -30,7 +31,18 @@ async def test_user_repo_create_get_returns_same_user(user_repo: UserRepo) -> No
     assert not hasattr(user, "password")
 
 
-@pytest.mark.anyio
+async def test_user_repo_raises_conflict_if_user_already_exists(
+    user_repo: UserRepo,
+) -> None:
+    email = "foo@example.org"
+
+    await user_repo.create("foo_user", email, "foo_password")
+    await user_repo.db_session.commit()
+
+    with pytest.raises(exceptions.UserAlreadyExists):
+        await user_repo.create("Foo User", email, "foo password 2")
+
+
 async def test_user_repo_create_authenticate_returns_same_user(
     user_repo: UserRepo,
 ) -> None:
@@ -48,7 +60,6 @@ async def test_user_repo_create_authenticate_returns_same_user(
     assert not hasattr(user, "password")
 
 
-@pytest.mark.anyio
 async def test_user_repo_raises_exception_when_user_is_not_found(
     user_repo: UserRepo,
 ) -> None:
@@ -58,7 +69,6 @@ async def test_user_repo_raises_exception_when_user_is_not_found(
         await user_repo.get(email)
 
 
-@pytest.mark.anyio
 async def test_user_repo_raises_exception_when_bad_authenticated_user(
     user_repo: UserRepo,
 ) -> None:
@@ -73,7 +83,6 @@ async def test_user_repo_raises_exception_when_bad_authenticated_user(
         await user_repo.authenticate(email, "other_password")
 
 
-@pytest.mark.anyio
 async def test_user_repo_raises_exception_when_authenticating_user_not_exists(
     user_repo: UserRepo,
 ) -> None:

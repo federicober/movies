@@ -15,9 +15,15 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 
 @pytest.fixture()
-def sql_engine(tmp_path: pathlib.Path) -> sqlalchemy.Engine:
-    engine = sqlmodel.create_engine(f"sqlite:///{tmp_path}/database.db")
-    sqlmodel.SQLModel.metadata.create_all(engine)
+def db_dsn(tmp_path: pathlib.Path) -> pathlib.Path:
+    path = tmp_path / "database.db"
+    sqlmodel.SQLModel.metadata.create_all(sqlmodel.create_engine(f"sqlite:///{path}"))
+    return path
+
+
+@pytest.fixture()
+def sql_engine(db_dsn: pathlib.Path) -> sqlalchemy.Engine:
+    engine = sqlmodel.create_engine(f"sqlite:///{db_dsn}")
     return engine
 
 
@@ -35,12 +41,9 @@ def sql_session_factory(sql_engine: sqlalchemy.Engine) -> SqlSessionFactory:
 
 
 @pytest.fixture()
-def sql_async_engine(
-    tmp_path: pathlib.Path,
-    # use the engine fixture to ensure that the tables are created
-    sql_engine: sqlalchemy.Engine,
-) -> AsyncEngine:
-    return create_async_engine(f"sqlite+aiosqlite:///{tmp_path}/database.db", echo=True)
+async def sql_async_engine(db_dsn: pathlib.Path) -> AsyncEngine:
+    engine = create_async_engine(f"sqlite+aiosqlite:///{db_dsn}")
+    return engine
 
 
 @pytest.fixture()

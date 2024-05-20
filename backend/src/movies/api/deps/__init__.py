@@ -1,22 +1,14 @@
-import contextlib
-from typing import Annotated, AsyncIterator
+from typing import Annotated, cast
 
 import fastapi
+import jwt
 import pydantic
 from fastapi import security, status
-from jose import JWTError, jwt
 
 from movies._types import AsyncContextManagerFactory
-from movies.api import schemas
-from movies.core import exceptions
-from movies.core.database import AsyncSessionFactory, data_model, get_session_factory
-from movies.core.repositories import interfaces
-from movies.core.repositories.user_repo import UserRepo
-from movies.settings import _Settings, get_settings
-
-SessionFactory = Annotated[AsyncSessionFactory, fastapi.Depends(get_session_factory)]
-Settings = Annotated[_Settings, fastapi.Depends(get_settings)]
-
+from movies.api import schemas, settings, state
+from movies.core import exceptions, transaction
+from movies.core.database import data_model
 
 oauth2_scheme = security.OAuth2PasswordBearer(tokenUrl="v1/auth/token")
 
@@ -30,25 +22,34 @@ UNAUTHORIZED_EXCEPTION = fastapi.HTTPException(
 )
 
 
-async def get_user_repo_factory(
-    session_factory: SessionFactory,
-) -> AsyncContextManagerFactory[UserRepo]:
-    @contextlib.asynccontextmanager
-    async def user_repo() -> AsyncIterator[UserRepo]:
-        async with session_factory() as session:
-            yield UserRepo(session)
-
-    return user_repo
+async def get_app_state(request: fastapi.requests.HTTPConnection) -> state.AppState:
+    return cast(state.AppState, request.state._state)
 
 
-UserRepoFactory = Annotated[
-    AsyncContextManagerFactory[interfaces.IUserRepo],
-    fastapi.Depends(get_user_repo_factory),
+AppState = Annotated[state.AppState, fastapi.Depends(get_app_state)]
+
+
+async def get_settings(state: AppState) -> settings.Settings:
+    return state["settings"]
+
+
+Settings = Annotated[settings.Settings, fastapi.Depends(get_settings)]
+
+
+async def get_transaction_factory(
+    state: AppState,
+) -> AsyncContextManagerFactory[transaction.ITransaction]:
+    return state["transaction_factory"]
+
+
+TransactionFactory = Annotated[
+    AsyncContextManagerFactory[transaction.ITransaction],
+    fastapi.Depends(get_transaction_factory),
 ]
 
 
 async def get_current_user(
-    token: AccessToken, settings: Settings, user_repo_factory: UserRepoFactory
+    token: AccessToken, settings: Settings, trasnaction_factory: TransactionFactory
 ) -> data_model.User:
     try:
         token_data = schemas.token.TokenData(
@@ -58,10 +59,10 @@ async def get_current_user(
                 algorithms=[settings.access_token_sign_algorithm],
             )
         )
-        async with user_repo_factory() as user_repo:
-            user = await user_repo.get(token_data.sub)
-    except (JWTError, pydantic.ValidationError, exceptions.UserNotFound) as err:
+    except (jwt.PyJWTError, pydantic.ValidationError, exceptions.UserNotFound) as err:
         raise UNAUTHORIZED_EXCEPTION from err
+    async with trasnaction_factory() as transaction:
+        user = await transaction.users.get(token_data.sub)
     return user
 
 
