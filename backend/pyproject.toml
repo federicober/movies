@@ -38,6 +38,7 @@ requires = ["setuptools>=68"]
 [tool.pytest.ini_options]
 addopts = """
 --cov=movies
+--cov-report=term-missing
 """
 testpaths = ["tests"]
 filterwarnings = ['ignore::DeprecationWarning']

@@ -6,7 +6,7 @@ import pydantic
 from fastapi import security, status
 
 from movies._types import AsyncContextManagerFactory
-from movies.api import schemas, settings, state
+from movies.api import config, schemas, state
 from movies.core import exceptions, transaction
 from movies.core.database import data_model
 
@@ -29,11 +29,11 @@ async def get_app_state(request: fastapi.requests.HTTPConnection) -> state.AppSt
 AppState = Annotated[state.AppState, fastapi.Depends(get_app_state)]
 
 
-async def get_settings(state: AppState) -> settings.Settings:
+async def get_settings(state: AppState) -> config.Settings:
     return state["settings"]
 
 
-Settings = Annotated[settings.Settings, fastapi.Depends(get_settings)]
+Settings = Annotated[config.Settings, fastapi.Depends(get_settings)]
 
 
 async def get_transaction_factory(
@@ -49,7 +49,7 @@ TransactionFactory = Annotated[
 
 
 async def get_current_user(
-    token: AccessToken, settings: Settings, trasnaction_factory: TransactionFactory
+    token: AccessToken, settings: Settings, transaction_factory: TransactionFactory
 ) -> data_model.User:
     try:
         token_data = schemas.token.TokenData(
@@ -61,7 +61,7 @@ async def get_current_user(
         )
     except (jwt.PyJWTError, pydantic.ValidationError, exceptions.UserNotFound) as err:
         raise UNAUTHORIZED_EXCEPTION from err
-    async with trasnaction_factory() as transaction:
+    async with transaction_factory() as transaction:
         user = await transaction.users.get(token_data.sub)
     return user
 

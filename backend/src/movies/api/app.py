@@ -4,13 +4,13 @@ from typing import AsyncIterator
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 
-from movies.api import endpoints, settings, state
+from movies.api import config, endpoints, state
 from movies.core import transaction
 
 
-def app_factory(settings_: settings.Settings | None = None) -> fastapi.FastAPI:
-    if settings_ is None:
-        settings_ = settings.Settings()  # pyright: ignore[reportCallIssue]
+def app_factory(settings_: config.Settings | None = None) -> fastapi.FastAPI:
+    if settings_ is None:  # pragma: nocover
+        settings_ = config.Settings()  # pyright: ignore[reportCallIssue]
 
     @contextlib.asynccontextmanager
     async def lifespan(app: fastapi.FastAPI) -> AsyncIterator[state.AppState]:

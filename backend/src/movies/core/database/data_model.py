@@ -35,5 +35,7 @@ class Session(sqlmodel.SQLModel, table=True):
 
 class Movie(sqlmodel.SQLModel, table=True):
     id: Optional[int] = sqlmodel.Field(default=None, primary_key=True)
+
+    reference: str = sqlmodel.Field(unique=True, index=True)
     title: str
     image_url: str

@@ -8,7 +8,7 @@ import freezegun
 import jwt
 import pytest
 from fastapi import testclient
-from movies.api import settings as settings_module
+from movies.api import config as settings_module
 from movies.api import state
 from movies.api.app import app_factory
 from movies.core import exceptions

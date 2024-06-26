@@ -5,13 +5,16 @@ from typing import AsyncIterator, Protocol
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from movies.core.repositories.interfaces import IUserRepo
-from movies.core.repositories.user_repo import UserRepo
+from movies.core import repositories
 
 
 class ITransaction(Protocol):
     @property
-    def users(self) -> IUserRepo: ...
+    def users(self) -> repositories.IUserRepo: ...
+    @property
+    def sessions(self) -> repositories.ISessionRepo: ...
+    @property
+    def movies(self) -> repositories.IMovieRepo: ...
     async def commit(self) -> None: ...
     async def rollback(self) -> None: ...
 
@@ -27,8 +30,16 @@ class Transaction(ITransaction):
         await self.db_session.rollback()
 
     @property
-    def users(self) -> UserRepo:
-        return UserRepo(self.db_session)
+    def users(self) -> repositories.UserRepo:
+        return repositories.UserRepo(self.db_session)
+
+    @property
+    def sessions(self) -> repositories.SessionRepo:
+        return repositories.SessionRepo(self.db_session)
+
+    @property
+    def movies(self) -> repositories.MovieRepo:
+        return repositories.MovieRepo(self.db_session)
 
 
 class TransactionFactory:

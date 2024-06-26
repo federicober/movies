@@ -23,3 +23,7 @@ class AlreadyExists(MoviesException):
 
 class UserAlreadyExists(AlreadyExists):
     pass
+
+
+class MovieAlreadyExists(AlreadyExists):
+    pass

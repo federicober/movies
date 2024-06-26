@@ -1,7 +1,7 @@
 from typing import TypedDict
 
 from movies._types import AsyncContextManagerFactory
-from movies.api.settings import Settings
+from movies.api.config import Settings
 from movies.core import transaction
 
 
